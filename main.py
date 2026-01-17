@@ -3,6 +3,7 @@ from flask_mail import Mail, Message
 import sqlite3
 import os
 import secrets
+import uuid
 from datetime import timedelta, datetime
 
 # הגדרת האפליקציה
@@ -42,6 +43,17 @@ def init_db():
     except sqlite3.OperationalError:
         cursor.execute("ALTER TABLE users ADD COLUMN is_premium INTEGER DEFAULT 0")
         print("Column 'is_premium' added to users table.")
+
+    # יצירת טבלת מעקב משחקים יומיים
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS daily_game_plays (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            device_id TEXT,
+            played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            had_ad INTEGER DEFAULT 1
+        )
+    ''')
 
     # הבטחת קיום המשתמש RotemD
     cursor.execute("SELECT id FROM users WHERE username = ?", (ADMIN_USER,))
@@ -359,6 +371,107 @@ def clear_game_data():
     users_to_clear = [u for u, d in active_game_states.items() if d.get('sender') == host_user]
     for u in users_to_clear: active_game_states.pop(u, None)
     if host_user in lobby_status: lobby_status[host_user] = {}
+    return jsonify({'success': True})
+
+# --- API endpoints לניהול משחקים יומיים ---
+
+def get_today_date():
+    """קבל את תאריך היום בתנסק 'YYYY-MM-DD'"""
+    return datetime.now().strftime('%Y-%m-%d')
+
+def check_if_played_without_ad(username=None, device_id=None):
+    """
+    בדוק אם משתמש או מכשיר שיחקו כבר היום בלי פרסומת
+    הגנה כפולה: אם אחד מהם שיחק בלי פרסומת - צריך פרסומת
+    """
+    today = get_today_date()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # בדוק אם המשתמש שיחק בלי פרסומת היום
+    user_played_free = False
+    if username:
+        cursor.execute(
+            "SELECT COUNT(*) as count FROM daily_game_plays WHERE username = ? AND date(played_at) = ? AND had_ad = 0",
+            (username, today)
+        )
+        user_played_free = cursor.fetchone()['count'] > 0
+    
+    # בדוק אם המכשיר שיחק בלי פרסומת היום
+    device_played_free = False
+    if device_id:
+        cursor.execute(
+            "SELECT COUNT(*) as count FROM daily_game_plays WHERE device_id = ? AND date(played_at) = ? AND had_ad = 0",
+            (device_id, today)
+        )
+        device_played_free = cursor.fetchone()['count'] > 0
+    
+    conn.close()
+    
+    # אם אחד מהם שיחק בלי פרסומת - צריך פרסומת
+    return user_played_free or device_played_free
+
+@app.route('/api/check-game-ad', methods=['POST'])
+def check_game_ad():
+    """
+    בדוק אם השחקן צריך להציג פרסומת לפני המשחק
+    
+    POST data:
+    - device_id: UUID של המכשיר
+    - username: שם המשתמש (optional - אם אורח, None)
+    
+    Response:
+    - needs_ad: האם צריך להציג פרסומת
+    - is_premium: האם המשתמש פרימיום (אז אף פעם אין פרסומת)
+    """
+    data = request.json
+    device_id = data.get('device_id')
+    username = session.get('username') if 'username' in session else None
+    
+    # אם פרימיום - אין פרסומת
+    is_premium = False
+    if username:
+        conn = get_db_connection()
+        user = conn.execute("SELECT is_premium FROM users WHERE username = ?", (username,)).fetchone()
+        conn.close()
+        is_premium = bool(user['is_premium']) if user else False
+    
+    if is_premium:
+        return jsonify({'needs_ad': False, 'is_premium': True})
+    
+    # בדוק אם כבר שיחק היום בלי פרסומת
+    needs_ad = check_if_played_without_ad(username, device_id)
+    
+    return jsonify({
+        'needs_ad': needs_ad,
+        'is_premium': False,
+        'device_id': device_id,
+        'username': username
+    })
+
+@app.route('/api/record-game-play', methods=['POST'])
+def record_game_play():
+    """
+    רשום משחק שהתחיל עכשיו
+    
+    POST data:
+    - device_id: UUID של המכשיר
+    - had_ad: האם הוצגה פרסומת (0 = לא, 1 = כן)
+    """
+    data = request.json
+    device_id = data.get('device_id')
+    had_ad = data.get('had_ad', 1)  # דיפולט = היו פרסומות
+    username = session.get('username') if 'username' in session else None
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO daily_game_plays (username, device_id, had_ad) VALUES (?, ?, ?)",
+        (username, device_id, had_ad)
+    )
+    conn.commit()
+    conn.close()
+    
     return jsonify({'success': True})
 
 if __name__ == '__main__':

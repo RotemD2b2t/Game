@@ -1,188 +1,240 @@
-// Daily Game Limit Logic
-const DAILY_GAME_STORAGE_KEY = 'dailyGameState';
-const MAX_FREE_GAMES_PER_DAY = 1;
+// Daily Game Limit Logic - Updated with Full Screen Ad and Dual Protection
 
-function getDailyGameState() {
-  const stored = localStorage.getItem(DAILY_GAME_STORAGE_KEY);
-  if (!stored) {
-    return { lastPlayedDate: null, dailyCount: 0 };
-  }
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return { lastPlayedDate: null, dailyCount: 0 };
-  }
+// Create unique device ID
+function getOrCreateDeviceId() {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = 'device-' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('deviceId', deviceId);
+    }
+    return deviceId;
 }
+
+const DAILY_GAME_STORAGE_KEY = 'dailyGameState';
 
 function getCurrentDate() {
-  return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-}
-
-function shouldShowAd() {
-  const isPremium = localStorage.getItem('isPremium') === 'true';
-  if (isPremium) return false;
-
-  const state = getDailyGameState();
-  const today = getCurrentDate();
-
-  // If different day, no ad needed
-  if (state.lastPlayedDate !== today) {
-    return false;
-  }
-
-  // Same day: if already played once, show ad
-  return state.dailyCount >= MAX_FREE_GAMES_PER_DAY;
+    return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 }
 
 function recordGamePlay() {
-  const today = getCurrentDate();
-  const state = getDailyGameState();
+    const today = getCurrentDate();
+    const state = JSON.parse(localStorage.getItem(DAILY_GAME_STORAGE_KEY) || '{"lastPlayedDate":null,"dailyCount":0}');
 
-  if (state.lastPlayedDate !== today) {
-    // New day
-    const newState = { lastPlayedDate: today, dailyCount: 1 };
-    localStorage.setItem(DAILY_GAME_STORAGE_KEY, JSON.stringify(newState));
-  } else {
-    // Same day: increment
-    state.dailyCount += 1;
-    localStorage.setItem(DAILY_GAME_STORAGE_KEY, JSON.stringify(state));
-  }
+    if (state.lastPlayedDate !== today) {
+        const newState = { lastPlayedDate: today, dailyCount: 1 };
+        localStorage.setItem(DAILY_GAME_STORAGE_KEY, JSON.stringify(newState));
+    } else {
+        state.dailyCount += 1;
+        localStorage.setItem(DAILY_GAME_STORAGE_KEY, JSON.stringify(state));
+    }
 }
 
-// Interstitial Ad Modal HTML
-function createAdModal() {
-  const existingModal = document.getElementById('ad-interstitial-modal');
-  if (existingModal) {
-    existingModal.remove();
-  }
+// Full-Screen Ad Component
+function createFullScreenAd(onComplete) {
+    const adContainer = document.createElement('div');
+    adContainer.id = 'full-screen-ad-container';
+    adContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        direction: rtl;
+        font-family: 'Heebo', sans-serif;
+    `;
 
-  const modal = document.createElement('div');
-  modal.id = 'ad-interstitial-modal';
-  modal.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  `;
+    const adContent = document.createElement('div');
+    adContent.style.cssText = `
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 90%;
+        max-height: 85vh;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    `;
 
-  modal.innerHTML = `
-    <div style="
-      background: white;
-      border-radius: 12px;
-      padding: 32px;
-      max-width: 600px;
-      width: 90%;
-      text-align: center;
-      direction: rtl;
-    ">
-      <h2 style="margin-top: 0; font-size: 20px; color: #333;">צפה בפרסומת כדי להמשיך למשחק</h2>
-      
-      <div style="
-        background: #f3f4f6;
-        border-radius: 8px;
-        height: 300px;
+    // Ad placeholder
+    const adPlaceholder = document.createElement('div');
+    adPlaceholder.style.cssText = `
+        width: 100%;
+        max-width: 600px;
+        height: 400px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 24px 0;
-        overflow: hidden;
-      ">
-        <ins class="adsbygoogle"
-             style="display: block; width: 100%; height: 100%;"
-             data-ad-client="ca-pub-4856462370528155"
-             data-ad-slot="5555555555"
-             data-ad-format="auto"></ins>
-      </div>
-
-      <div style="
-        font-size: 18px;
-        color: #666;
-        margin: 16px 0;
-      ">
-        <span id="ad-countdown">אתה יכול לסגור בעוד 5 שניות...</span>
-      </div>
-
-      <button id="ad-close-btn" style="
-        background: #3b82f6;
         color: white;
-        border: none;
-        padding: 12px 32px;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: not-allowed;
-        opacity: 0.5;
-        width: 100%;
-      " disabled>
-        המתן 5 שניות...
-      </button>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-  return modal;
-}
-
-function goToImpoGame() {
-  const isPremium = localStorage.getItem('isPremium') === 'true';
-
-  // Premium or not logged in: go immediately
-  if (isPremium || !localStorage.getItem('currentUser')) {
-    window.location.href = "/imposter_game";
-    return;
-  }
-
-  // Check if ad should be shown
-  if (shouldShowAd()) {
-    // Show ad modal
-    const modal = createAdModal();
-    let timeLeft = 5;
-
-    const countdownEl = document.getElementById('ad-countdown');
-    const closeBtn = document.getElementById('ad-close-btn');
-
-    // Initialize AdSense
-    if (window.adsbygoogle) {
-      try {
-        window.adsbygoogle.push({});
-      } catch (e) {
-        console.error('AdSense error:', e);
-      }
-    }
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    `;
+    adPlaceholder.textContent = 'פרסומת';
 
     // Countdown timer
-    const interval = setInterval(() => {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        clearInterval(interval);
-        countdownEl.textContent = '✓ ניתן לסגור את הפרסומת';
-        closeBtn.disabled = false;
-        closeBtn.style.opacity = '1';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.textContent = 'סגור ותחל במשחק';
-      } else {
-        countdownEl.textContent = `אתה יכול לסגור בעוד ${timeLeft} שניות...`;
-      }
+    let timeLeft = 30;
+    let canSkip = false;
+    
+    const timer = document.createElement('div');
+    timer.style.cssText = `
+        font-size: 48px;
+        font-weight: bold;
+        color: #333;
+        margin: 20px 0;
+    `;
+    timer.textContent = `${timeLeft}`;
+
+    const skipButton = document.createElement('button');
+    skipButton.textContent = 'דלג על הפרסומת';
+    skipButton.style.cssText = `
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        opacity: 0.3;
+        transition: opacity 0.3s, background 0.3s;
+    `;
+    skipButton.disabled = true;
+
+    // Countdown logic
+    const countdownInterval = setInterval(() => {
+        timeLeft--;
+        timer.textContent = `${timeLeft}`;
+
+        // After 10 seconds, enable skip button
+        if (timeLeft === 10 && !canSkip) {
+            canSkip = true;
+            skipButton.disabled = false;
+            skipButton.style.opacity = '1';
+        }
+
+        // Time's up
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            completeAd();
+        }
     }, 1000);
 
-    closeBtn.addEventListener('click', () => {
-      clearInterval(interval);
-      recordGamePlay();
-      modal.remove();
-      window.location.href = "/imposter_game";
-    });
+    skipButton.onclick = () => {
+        clearInterval(countdownInterval);
+        completeAd();
+    };
 
-    return;
-  }
+    adContent.appendChild(adPlaceholder);
+    adContent.appendChild(timer);
+    adContent.appendChild(skipButton);
 
-  // No ad needed: record and go
-  recordGamePlay();
-  window.location.href = "/imposter_game";
+    adContainer.appendChild(adContent);
+    document.body.appendChild(adContainer);
+
+    function completeAd() {
+        adContainer.remove();
+        if (onComplete) onComplete();
+    }
+}
+
+// Main game start function with ad logic
+async function goToImpoGame() {
+    try {
+        const isPremium = localStorage.getItem('isPremium') === 'true';
+        const deviceId = getOrCreateDeviceId();
+        const username = document.body.getAttribute('data-user') || null;
+
+        // Check if ad is needed
+        const response = await fetch('/api/check-game-ad', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device_id: deviceId, username })
+        });
+
+        const result = await response.json();
+
+        // Record this game play
+        await fetch('/api/record-game-play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device_id: deviceId, had_ad: result.needs_ad ? 1 : 0 })
+        });
+
+        // If premium or no ad needed, go straight to game
+        if (isPremium || !result.needs_ad) {
+            recordGamePlay();
+            window.location.href = '/imposter_game';
+            return;
+        }
+
+        // Show full-screen ad, then go to game
+        createFullScreenAd(() => {
+            recordGamePlay();
+            window.location.href = '/imposter_game';
+        });
+
+    } catch (error) {
+        console.error('Error checking ad:', error);
+        // If error, just go to game
+        recordGamePlay();
+        window.location.href = '/imposter_game';
+    }
+}
+
+// Main game start function with ad logic
+async function goToImpoGame() {
+    try {
+        const isPremium = localStorage.getItem('isPremium') === 'true';
+        const deviceId = getOrCreateDeviceId();
+        const username = document.body.getAttribute('data-user') || null;
+
+        // Check if ad is needed
+        const response = await fetch('/api/check-game-ad', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device_id: deviceId, username })
+        });
+
+        const result = await response.json();
+
+        // Record this game play
+        await fetch('/api/record-game-play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device_id: deviceId, had_ad: result.needs_ad ? 1 : 0 })
+        });
+
+        // If premium or no ad needed, go straight to game
+        if (isPremium || !result.needs_ad) {
+            recordGamePlay();
+            window.location.href = '/imposter_game';
+            return;
+        }
+
+        // Show full-screen ad, then go to game
+        createFullScreenAd(() => {
+            recordGamePlay();
+            window.location.href = '/imposter_game';
+        });
+
+    } catch (error) {
+        console.error('Error checking ad:', error);
+        // If error, just go to game
+        recordGamePlay();
+        window.location.href = '/imposter_game';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
