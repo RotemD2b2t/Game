@@ -108,6 +108,24 @@ def login():
             session['username'] = username
             session.permanent = True
             session['is_premium'] = bool(user['is_premium']) # שמירה בסשן לגישה מהירה
+            
+            # 🔴 אם התחבר כ-RotemD, אפס את כל הנתונים של ad plays לבדיקה
+            if username == ADMIN_USER:
+                try:
+                    conn = get_db_connection()
+                    cursor = conn.cursor()
+                    # מחק את כל הנתונים של היום עבור בדיקה
+                    today = datetime.now().date()
+                    cursor.execute(
+                        "DELETE FROM daily_game_plays WHERE date(played_at) = ?",
+                        (today,)
+                    )
+                    conn.commit()
+                    conn.close()
+                    print(f"✅ Reset daily game plays for today when {ADMIN_USER} logged in")
+                except Exception as e:
+                    print(f"❌ Error resetting daily game plays: {e}")
+            
             return jsonify({'success': True})
         return jsonify({'success': False, 'message': 'שם משתמש או סיסמה שגויים'})
     return render_template('login.html')
@@ -448,6 +466,39 @@ def check_game_ad():
         'device_id': device_id,
         'username': username
     })
+
+@app.route('/api/reset-ad-data', methods=['POST'])
+def reset_ad_data():
+    """
+    אפס את כל נתוני ad plays של היום
+    (מאובטח - רק עבור RotemD לבדיקה)
+    """
+    username = session.get('username')
+    
+    # בדוק שהוא RotemD
+    if username != ADMIN_USER:
+        return jsonify({'success': False, 'message': 'Unauthorized - only admin can reset'}), 403
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # מחק את כל הנתונים של היום
+        today = datetime.now().date()
+        cursor.execute(
+            "DELETE FROM daily_game_plays WHERE date(played_at) = ?",
+            (today,)
+        )
+        deleted_count = cursor.rowcount
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'✅ Deleted {deleted_count} records from today'
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 @app.route('/api/record-game-play', methods=['POST'])
 def record_game_play():

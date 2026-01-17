@@ -10,6 +10,52 @@ function getOrCreateDeviceId() {
     return deviceId;
 }
 
+// Settings Button - הצג רק במצב רגיל (לא גיימיל או אפליקציה)
+function createSettingsButton() {
+    const gameType = document.body.getAttribute('data-game-type') || 'imposter';
+    
+    // הצג כפתור רק אם זה משחק רגיל
+    if (gameType !== 'imposter') {
+        return;
+    }
+    
+    const settingsBtn = document.createElement('button');
+    settingsBtn.textContent = '⚙️ חזרה להגדרות';
+    settingsBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 8888;
+        font-family: 'Heebo', sans-serif;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+    `;
+    
+    settingsBtn.onmouseover = () => {
+        settingsBtn.style.transform = 'translateY(-2px)';
+        settingsBtn.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
+    };
+    
+    settingsBtn.onmouseout = () => {
+        settingsBtn.style.transform = 'translateY(0)';
+        settingsBtn.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+    };
+    
+    settingsBtn.onclick = () => {
+        window.location.href = '/choosegame';
+    };
+    
+    document.body.appendChild(settingsBtn);
+}
+
 // Full-Screen Ad Component - Professional Design
 function createFullScreenAd(onComplete) {
     const adContainer = document.createElement('div');

@@ -31,6 +31,10 @@
             <a href="/" class="btn-home" style="padding: 10px; border-radius: 8px;">חזרה לבית</a>
         </div>
         
+        <div class="controls" style="margin-bottom: 20px;">
+            <button class="reset-btn" onclick="resetAdData()" style="background: #ef4444; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">🔴 אפס ad data של היום</button>
+        </div>
+        
         <div class="controls">
             <input type="text" id="searchInput" placeholder="חפש משתמש..." onkeypress="if(event.key === 'Enter') fetchUsers()">
             <button class="btn-search" onclick="fetchUsers()">חפש</button>
@@ -62,6 +66,27 @@
                 renderTable(users);
             } catch (e) {
                 alert('שגיאה בטעינת נתונים');
+            }
+        }
+
+        async function resetAdData() {
+            if (!confirm('🔴 אתה בטוח? זה יאפס את כל נתוני ad plays של היום!')) return;
+            
+            try {
+                const res = await fetch('/api/reset-ad-data', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                } else {
+                    alert('❌ ' + (data.message || 'שגיאה'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('❌ שגיאה בקריאה ל-API');
             }
         }
 
