@@ -1,9 +1,10 @@
 /**
  * AdSense Configuration with automatic detection for multiple environments
- * Supports 3 environments:
- * 1. localhost (development on Mac)
- * 2. cfea6322-5da0-4046-9bdf-84eb085104be-00-glbm0cltnd21.pike.replit.dev (testing)
- * 3. 2a94b1c6-6e1e-4a7b-a334-078b58df0c1e-00-3v2a3s4g0yco4.pike.replit.dev (production)
+ * Supports 4 environments:
+ * 1. localhost:5001 (development on Mac)
+ * 2. game-platform--rotemdujovny.replit.app (production - original)
+ * 3. cfea6322-5da0-4046-9bdf-84eb085104be-00-glbm0cltnd21.pike.replit.dev (testing)
+ * 4. 2a94b1c6-6e1e-4a7b-a334-078b58df0c1e-00-3v2a3s4g0yco4.pike.replit.dev (production - 2nd)
  */
 
 interface AdConfig {

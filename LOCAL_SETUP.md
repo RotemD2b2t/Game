@@ -201,6 +201,7 @@ python3 main.py
 1. עדכן את slot IDs של AdSense ב-`client/src/lib/adConfig.ts`
    - החלף את ה-slot values עם ה-slot IDs שלך מ-Google AdSense
 2. טסט על ה-published דומיינים:
+   - Original: game-platform--rotemdujovny.replit.app
    - Testing: cfea6322-5da0-4046-9bdf-84eb085104be-00-glbm0cltnd21.pike.replit.dev
    - Production: 2a94b1c6-6e1e-4a7b-a334-078b58df0c1e-00-3v2a3s4g0yco4.pike.replit.dev
 3. בדוק AdSense dashboard לדוחות הכנסה
