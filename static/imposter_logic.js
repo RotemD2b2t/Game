@@ -56,7 +56,7 @@ function createSettingsButton() {
     document.body.appendChild(settingsBtn);
 }
 
-// Full-Screen Ad Component - Professional Design
+// Full-Screen Ad Component - YouTube Style
 function createFullScreenAd(onComplete) {
     const adContainer = document.createElement('div');
     adContainer.id = 'full-screen-ad-container';
@@ -64,164 +64,71 @@ function createFullScreenAd(onComplete) {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
-        z-index: 10000;
+        background: #000;
+        z-index: 99999;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         padding: 0;
         margin: 0;
         overflow: hidden;
-        direction: rtl;
-        font-family: 'Heebo', '-apple-system', sans-serif;
     `;
 
-    // Header
-    const header = document.createElement('div');
-    header.style.cssText = `
+    // Ad video area (full screen black)
+    const videoArea = document.createElement('div');
+    videoArea.style.cssText = `
         width: 100%;
-        padding: 15px 20px;
-        background: rgba(255, 255, 255, 0.05);
-        text-align: right;
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    `;
-    header.textContent = 'פרסומת';
-
-    const adContent = document.createElement('div');
-    adContent.style.cssText = `
-        background: white;
-        border-radius: 12px;
-        padding: 0;
-        width: 90%;
-        max-width: 600px;
-        height: auto;
-        text-align: center;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        overflow: hidden;
-        margin: 20px auto;
-    `;
-
-    // Ad placeholder - larger, more professional
-    const adPlaceholder = document.createElement('div');
-    adPlaceholder.style.cssText = `
-        width: 100%;
-        aspect-ratio: 1 / 1.2;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a2e, #0f3460);
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 80px;
+    `;
+    videoArea.textContent = '📺';
+
+    // Skip button - YouTube style (bottom right)
+    const skipBtn = document.createElement('button');
+    skipBtn.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        background: rgba(0, 0, 0, 0.7);
         color: white;
-        font-size: 48px;
-        font-weight: bold;
-        position: relative;
-        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 10px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: not-allowed;
+        z-index: 100000;
+        font-family: 'Roboto', 'Heebo', sans-serif;
+        transition: all 0.2s ease;
+        opacity: 0.5;
     `;
-    
-    // Add some animation
-    const bgAnimation = document.createElement('div');
-    bgAnimation.style.cssText = `
-        position: absolute;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
-        animation: shimmer 3s infinite;
-        top: 0;
-        left: -100%;
-    `;
-    
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes shimmer {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(100%); }
-        }
-    `;
-    document.head.appendChild(style);
-    
-    adPlaceholder.appendChild(bgAnimation);
-    adPlaceholder.textContent = '🎯 פרסומת';
+    skipBtn.disabled = true;
+    skipBtn.textContent = 'דילוג ב-20';
 
-    // Info section
-    const infoSection = document.createElement('div');
-    infoSection.style.cssText = `
-        padding: 20px;
-        width: 100%;
-        box-sizing: border-box;
-    `;
-
-    // Countdown timer
+    // Timer for countdown
     let timeLeft = 30;
     let canSkip = false;
     
-    const timerContainer = document.createElement('div');
-    timerContainer.style.cssText = `
-        margin: 20px 0;
-    `;
-    
-    const timerLabel = document.createElement('div');
-    timerLabel.style.cssText = `
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 10px;
-    `;
-    timerLabel.textContent = 'סיום הפרסומת בעוד:';
-    
-    const timer = document.createElement('div');
-    timer.style.cssText = `
-        font-size: 56px;
-        font-weight: bold;
-        color: #667eea;
-        font-family: 'Courier New', monospace;
-        margin: 10px 0;
-    `;
-    timer.textContent = `${timeLeft}`;
-
-    timerContainer.appendChild(timerLabel);
-    timerContainer.appendChild(timer);
-
-    const skipButton = document.createElement('button');
-    skipButton.textContent = 'דלג על הפרסומת (אחרי 10 שניות)';
-    skipButton.style.cssText = `
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: not-allowed;
-        margin-top: 15px;
-        margin-bottom: 10px;
-        opacity: 0.3;
-        transition: all 0.3s ease;
-        width: 100%;
-        max-width: 400px;
-        box-sizing: border-box;
-        font-family: 'Heebo', sans-serif;
-    `;
-    skipButton.disabled = true;
-
-    // Countdown logic
     const countdownInterval = setInterval(() => {
         timeLeft--;
-        timer.textContent = `${timeLeft}`;
-
-        // After 10 seconds, enable skip button
-        if (timeLeft === 10 && !canSkip) {
+        
+        // Update skip button text
+        if (timeLeft > 10) {
+            skipBtn.textContent = `דילוג ב-${timeLeft - 10}`;
+        } else if (timeLeft === 10 && !canSkip) {
+            // Enable skip after 10 seconds
             canSkip = true;
-            skipButton.disabled = false;
-            skipButton.style.opacity = '1';
-            skipButton.style.cursor = 'pointer';
-            skipButton.textContent = 'דלג על הפרסומת';
+            skipBtn.disabled = false;
+            skipBtn.style.opacity = '1';
+            skipBtn.style.cursor = 'pointer';
+            skipBtn.textContent = 'דילוג';
+            skipBtn.style.background = 'rgba(255, 255, 255, 0.2)';
         }
 
         // Time's up
@@ -231,19 +138,15 @@ function createFullScreenAd(onComplete) {
         }
     }, 1000);
 
-    skipButton.onclick = () => {
-        clearInterval(countdownInterval);
-        completeAd();
+    skipBtn.onclick = () => {
+        if (canSkip) {
+            clearInterval(countdownInterval);
+            completeAd();
+        }
     };
 
-    infoSection.appendChild(timerContainer);
-    infoSection.appendChild(skipButton);
-    
-    adContent.appendChild(adPlaceholder);
-    adContent.appendChild(infoSection);
-
-    adContainer.appendChild(header);
-    adContainer.appendChild(adContent);
+    adContainer.appendChild(videoArea);
+    adContainer.appendChild(skipBtn);
     document.body.appendChild(adContainer);
 
     function completeAd() {
