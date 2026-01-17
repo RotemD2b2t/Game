@@ -10,7 +10,7 @@ function getOrCreateDeviceId() {
     return deviceId;
 }
 
-// Full-Screen Ad Component
+// Full-Screen Ad Component - Professional Design
 function createFullScreenAd(onComplete) {
     const adContainer = document.createElement('div');
     adContainer.id = 'full-screen-ad-container';
@@ -19,77 +19,148 @@ function createFullScreenAd(onComplete) {
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.95);
+        height: 100vh;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
         z-index: 10000;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
         direction: rtl;
-        font-family: 'Heebo', sans-serif;
+        font-family: 'Heebo', '-apple-system', sans-serif;
     `;
+
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        width: 100%;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        text-align: right;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    `;
+    header.textContent = 'פרסומת';
 
     const adContent = document.createElement('div');
     adContent.style.cssText = `
         background: white;
-        border-radius: 15px;
-        padding: 30px;
-        max-width: 90%;
-        max-height: 85vh;
+        border-radius: 12px;
+        padding: 0;
+        width: 90%;
+        max-width: 600px;
+        height: auto;
         text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        overflow: hidden;
+        margin: 20px auto;
     `;
 
-    // Ad placeholder
+    // Ad placeholder - larger, more professional
     const adPlaceholder = document.createElement('div');
     adPlaceholder.style.cssText = `
         width: 100%;
-        max-width: 600px;
-        height: 400px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 10px;
+        aspect-ratio: 1 / 1.2;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 24px;
+        font-size: 48px;
         font-weight: bold;
-        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
     `;
-    adPlaceholder.textContent = 'פרסומת';
+    
+    // Add some animation
+    const bgAnimation = document.createElement('div');
+    bgAnimation.style.cssText = `
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+        animation: shimmer 3s infinite;
+        top: 0;
+        left: -100%;
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shimmer {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    adPlaceholder.appendChild(bgAnimation);
+    adPlaceholder.textContent = '🎯 פרסומת';
+
+    // Info section
+    const infoSection = document.createElement('div');
+    infoSection.style.cssText = `
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    `;
 
     // Countdown timer
     let timeLeft = 30;
     let canSkip = false;
     
+    const timerContainer = document.createElement('div');
+    timerContainer.style.cssText = `
+        margin: 20px 0;
+    `;
+    
+    const timerLabel = document.createElement('div');
+    timerLabel.style.cssText = `
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    `;
+    timerLabel.textContent = 'סיום הפרסומת בעוד:';
+    
     const timer = document.createElement('div');
     timer.style.cssText = `
-        font-size: 48px;
+        font-size: 56px;
         font-weight: bold;
-        color: #333;
-        margin: 20px 0;
+        color: #667eea;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
     `;
     timer.textContent = `${timeLeft}`;
 
+    timerContainer.appendChild(timerLabel);
+    timerContainer.appendChild(timer);
+
     const skipButton = document.createElement('button');
-    skipButton.textContent = 'דלג על הפרסומת';
+    skipButton.textContent = 'דלג על הפרסומת (אחרי 10 שניות)';
     skipButton.style.cssText = `
-        background: #e74c3c;
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         border: none;
-        padding: 15px 30px;
-        border-radius: 50px;
+        padding: 14px 28px;
+        border-radius: 8px;
         font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 20px;
+        font-weight: 600;
+        cursor: not-allowed;
+        margin-top: 15px;
+        margin-bottom: 10px;
         opacity: 0.3;
-        transition: opacity 0.3s, background 0.3s;
+        transition: all 0.3s ease;
+        width: 100%;
+        max-width: 400px;
+        box-sizing: border-box;
+        font-family: 'Heebo', sans-serif;
     `;
     skipButton.disabled = true;
 
@@ -103,6 +174,8 @@ function createFullScreenAd(onComplete) {
             canSkip = true;
             skipButton.disabled = false;
             skipButton.style.opacity = '1';
+            skipButton.style.cursor = 'pointer';
+            skipButton.textContent = 'דלג על הפרסומת';
         }
 
         // Time's up
@@ -117,10 +190,13 @@ function createFullScreenAd(onComplete) {
         completeAd();
     };
 
+    infoSection.appendChild(timerContainer);
+    infoSection.appendChild(skipButton);
+    
     adContent.appendChild(adPlaceholder);
-    adContent.appendChild(timer);
-    adContent.appendChild(skipButton);
+    adContent.appendChild(infoSection);
 
+    adContainer.appendChild(header);
     adContainer.appendChild(adContent);
     document.body.appendChild(adContainer);
 
@@ -151,21 +227,25 @@ async function checkAndShowAdBeforeGame() {
 
         const result = await response.json();
 
-        // Record this game play
-        await fetch('/api/record-game-play', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ device_id: deviceId, had_ad: result.needs_ad ? 1 : 0 })
-        });
-
-        // If no ad needed, continue
+        // If no ad needed, record without ad and continue
         if (!result.needs_ad) {
+            await fetch('/api/record-game-play', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ device_id: deviceId, had_ad: 0 })
+            });
             return true;
         }
 
-        // Show full-screen ad
+        // Ad is needed: show it first, then record
         return new Promise((resolve) => {
-            createFullScreenAd(() => {
+            createFullScreenAd(async () => {
+                // Record with ad = 1
+                await fetch('/api/record-game-play', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ device_id: deviceId, had_ad: 1 })
+                });
                 resolve(true);
             });
         });
