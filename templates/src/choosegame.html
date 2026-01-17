@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="google-adsense-account" content="ca-pub-4856462370528155">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4856462370528155" crossorigin="anonymous"></script>
         <title>בחירת משחק</title>
         
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +13,6 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='choosegame.css') }}">
     </head>
 <body>
-    <meta name="google-adsense-account" content="ca-pub-4856462370528155">
     <div class="main-content-wrapper">
         <div class="user-nav">
             <div class="user-welcome">
@@ -129,6 +130,27 @@
                 }
             }
         });
+
+        // Initialize AdSense
+        (adsbygoogle = window.adsbygoogle || []).push({});
+
+        // Hide ads if user is premium
+        document.addEventListener('DOMContentLoaded', function() {
+            const isPremium = localStorage.getItem('isPremium') === 'true';
+            if (isPremium) {
+                const ads = document.querySelectorAll('.adsbygoogle');
+                ads.forEach(ad => ad.style.display = 'none');
+            }
+        });
     </script>
+
+    <!-- Horizontal Ad at bottom of page -->
+    <div style="text-align: center; padding: 10px; margin-top: 20px;">
+        <ins class="adsbygoogle"
+             style="display: inline-block; width: 100%; max-width: 728px; height: 90px;"
+             data-ad-client="ca-pub-4856462370528155"
+             data-ad-slot="5555555555"
+             data-ad-format="horizontal"></ins>
+    </div>
 </body>
 </html>
