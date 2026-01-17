@@ -245,7 +245,7 @@ def check_daily_game():
     })
 
 @app.route('/api/daily-game/record', methods=['POST'])
-def record_game_play():
+def record_daily_game_legacy():
     """
     Record that user played a game today.
     Client calls this after watching ad or playing a free game.
