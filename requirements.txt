@@ -1,0 +1,6 @@
+
+flask
+flask-mail
+flask-sqlalchemy
+psycopg2-binary
+psycopg2-binary

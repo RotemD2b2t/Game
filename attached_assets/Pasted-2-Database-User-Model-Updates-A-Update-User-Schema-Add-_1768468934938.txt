@@ -1,0 +1,113 @@
+2. Database & User Model Updates
+A. Update User Schema:
+
+Add is_premium (Boolean, default: false).
+
+Add role (String, default: 'user').
+
+Keep passwords hashed.
+
+Seed a Super Admin user.
+
+3. Admin Dashboard (Protected Route: /admin)
+Accessible ONLY if role === 'admin'.
+
+Search: Filter users by username.
+
+Table: Show User ID, Name, Role, Premium Status.
+
+Actions:
+
+Toggle Premium Status (Button).
+
+Reset Password (Button).
+
+4. Responsive Ad Layout (Persistent Ads)
+Implement the layout logic using CSS Media Queries. Condition: If user.is_premium === true, DO NOT render these ads.
+
+Desktop (min-width: 768px):
+
+Layout: [Left Ad Column] - [Game Content] - [Right Ad Column].
+
+Use CSS Grid/Flexbox to ensure the game is centered and ad columns are sticky.
+
+Insert AdSense Display Units in the side columns.
+
+Mobile (max-width: 767px):
+
+Layout: standard column.
+
+Insert a Sticky Footer Ad fixed to the bottom (position: fixed; bottom: 0;).
+
+Add padding-bottom to the main content so the game UI isn't covered by the ad.
+
+5. "First Game Free" & Interstitial Ad Logic
+This is the most critical logic. I want users to play one game per day without pre-roll ads, but every subsequent game requires watching an ad (unless they are Premium).
+
+The Logic Flow (in StartGame function):
+
+User clicks "Start Game".
+
+Check 1: Is user.is_premium?
+
+YES -> startGame() immediately.
+
+NO -> Proceed to Check 2.
+
+Check 2 (Daily Limit):
+
+Access localStorage. Look for last_played_date and daily_count.
+
+Get current date (YYYY-MM-DD).
+
+IF last_played_date != today:
+
+Set daily_count = 1.
+
+Update last_played_date = today.
+
+Action: startGame() (Free game for the new day).
+
+IF last_played_date == today:
+
+IF daily_count == 0: (Edge case, treat as new day).
+
+IF daily_count >= 1:
+
+Action: Trigger Ad Overlay Modal.
+
+Increment daily_count.
+
+The Ad Overlay Modal:
+
+Full-screen overlay.
+
+Text: "Watch this ad to start your next game...".
+
+Display an AdSense ad unit inside.
+
+Simulate/Handle Ad Completion: Since standard AdSense display ads don't have a reliable "onClose" callback like Video Ads, implement a "Close Ad" button that appears after a 5-second countdown timer.
+
+On "Close" click -> startGame().
+
+Summary of Tasks for you:
+Modify the HTML head with the script.
+
+Build the Admin Panel and Backend API for user management.
+
+Create the Responsive CSS for Sidebars (Desktop) vs Sticky Bottom (Mobile).
+
+Implement the localStorage logic for the "1 Free Game Per Day" rule.
+
+Integrate the Ad Component into the game start flow.
+
+Please write the code to implement this structure now.
+
+
+***
+
+### מה השתנה ומה חשוב שתדע:
+
+1.  **קוד ה-HEAD:** הכנסתי את הסקריפט שלך (עם המספר `ca-pub-4856462370528155`) ישר לתחילת הפרומפט כדי שלא יפספס.
+2.  **לוגיקת LocalStorage:** הסברתי לו במפורש איך לבדוק את התאריך. אם התאריך של היום שונה מהתאריך האחרון שנשמר -> אפס את הספירה ותן לשחק בחינם. אם זה אותו יום והספירה גדולה מ-0 -> תציג פרסומת.
+3.  **כפתור סגירה (טיימר):** בגלל שאתה משתמש במודעות רגילות של AdSense ולא במערכת וידאו (כמו AdMob לאפליקציות), אין דרך טכנית לדעת ב-100% שהמשתמש "סיים" לראות את הפרסומת. לכן, הנחיתי את ה-AI ליצור כפתור "סגור פרסומת והתחל משחק" שמופיע רק אחרי 5 שניות. זה טריק נפוץ שעובד מעולה.

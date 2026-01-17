@@ -1,0 +1,278 @@
+/* =========================================
+   NEO DARK THEME - MODERN CSS
+   Adapted for Mode Selection Page
+   ========================================= */
+
+:root {
+    /* פלטת צבעים - מצב כהה (ברירת מחדל) */
+    --bg-body: #0f172a;       /* כחול עמוק מאוד */
+    --bg-card: rgba(30, 41, 59, 0.6);
+    --bg-card-hover: rgba(51, 65, 85, 0.7);
+    --bg-input: rgba(15, 23, 42, 0.5);
+
+    /* גרדיאנטים */
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* אינדיגו לסגול */
+    --gradient-accent: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);  /* ורוד לאדום */
+    --gradient-gold: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);    /* זהב */
+
+    /* צבעים אחידים */
+    --primary: #818cf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --danger: #fb7185;
+
+    /* אפקטים */
+    --glass-blur: blur(12px);
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    --radius: 16px;
+}
+
+/* --- הגדרות מצב מואר (Light Mode) --- */
+body.light-mode {
+    --bg-body: #f0f9ff;       /* תכלת-לבן נקי */
+    --bg-card: rgba(255, 255, 255, 0.65);
+    --bg-card-hover: rgba(255, 255, 255, 0.85);
+    --bg-input: rgba(255, 255, 255, 0.8);
+
+    --text-main: #1e293b;     /* כחול-אפור כהה */
+    --text-muted: #64748b;
+    --border-color: rgba(0, 0, 0, 0.1);
+
+    /* שינוי קל לצלליות שיתאימו לרקע בהיר */
+    --shadow-sm: 0 4px 6px -1px rgba(148, 163, 184, 0.3);
+    --shadow-lg: 0 20px 25px -5px rgba(148, 163, 184, 0.4);
+}
+
+* { 
+    box-sizing: border-box; 
+    outline: none; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Heebo', sans-serif;
+    background-color: var(--bg-body);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.12) 0%, transparent 50%);
+    color: var(--text-main);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- סרגל ניווט (User Nav) --- */
+.user-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 900px; /* תואם לרוחב הקונטיינר הראשי */
+    padding: 12px 20px;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+}
+
+.user-welcome {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+body.light-mode .nav-links a {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+body.light-mode .nav-links a:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* כפתור החלפת מצב (Toggle) */
+#theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 0;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+#theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(30deg);
+}
+
+body.light-mode #theme-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Layout ראשי --- */
+main {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    background: linear-gradient(to right, var(--text-main), var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+
+/* --- כרטיסיות מצב (מותאמות ל-Neo Theme) --- */
+.modes-container {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.mode-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 24px; /* רדיוס גדול יותר כמו בעיצוב החדש */
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s ease, background-color 0.3s, border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    /* אנימציה ראשונית */
+    opacity: 0; 
+    transform: translateY(20px);
+}
+
+.mode-card:hover {
+    transform: translateY(-10px);
+    background: var(--bg-card-hover);
+    border-color: var(--primary);
+}
+
+.mode-card h2 {
+    color: var(--text-main);
+    margin-top: 0;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.mode-card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    flex-grow: 1;
+    margin-bottom: 30px;
+}
+
+/* --- כפתורים --- */
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
+}
+
+button:hover {
+    box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.6);
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* התאמה למובייל */
+@media (max-width: 768px) {
+    .modes-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .mode-card {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .user-nav {
+        flex-direction: row; /* משאיר בשורה אחת גם במובייל */
+        padding: 10px 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}    

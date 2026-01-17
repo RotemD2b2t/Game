@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>בחירת משחק</title>
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='choosegame.css') }}">
+    </head>
+<body>
+    <meta name="google-adsense-account" content="ca-pub-4856462370528155">
+    <div class="main-content-wrapper">
+        <div class="user-nav">
+            <div class="user-welcome">
+                {% if user %}
+                    שלום, {{ user }}
+                {% else %}
+                    אורח
+                {% endif %}
+            </div>
+            <div class="nav-links">
+                {% if user %}
+                    <a href="/logout">התנתק</a>
+                {% else %}
+                    <a href="/login">התחבר</a>
+                {% endif %}
+                <button id="theme-toggle-btn" title="החלף מצב תצוגה">🌓</button>
+            </div>
+        </div>
+
+        <main>
+            <h1>בחר את סוג המשחק</h1>
+
+            <div class="modes-container">
+                <div class="mode-card" id="mode-hint">
+                    <h2>משחק האימפוסטר</h2>
+                    <p>הסבר על המשחק</p>
+                    <button onclick="goToImpoGame()">שחק עכשיו</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='choosegame.js') }}"></script>
+    <script>
+        // Add placeholder for testing (if admin)
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = localStorage.getItem('currentUser') || '{{ user }}';
+            const isPremium = localStorage.getItem('isPremium') === 'true' || {{ 'true' if is_premium else 'false' }};
+            
+            if (user === 'RotemD' && isPremium) {
+                // Add gray placeholders for ad testing
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    .ad-placeholder {
+                        background-color: #d1d5db;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #666;
+                        font-weight: 500;
+                        font-size: 14px;
+                    }
+                    @media (min-width: 768px) {
+                        .ad-sidebar {
+                            display: flex;
+                            width: 200px;
+                            border: 1px solid #e5e7eb;
+                            padding: 16px;
+                            position: fixed;
+                            height: 100vh;
+                            background: #f9fafb;
+                        }
+                        .ad-sidebar.left { left: 0; }
+                        .ad-sidebar.right { right: 0; }
+                        .main-wrapper { margin-left: 200px; margin-right: 200px; }
+                        .ad-sidebar .ad-placeholder {
+                            width: 160px;
+                            height: 600px;
+                        }
+                    }
+                    @media (max-width: 767px) {
+                        .ad-footer {
+                            position: fixed;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            height: 90px;
+                            border-top: 1px solid #e5e7eb;
+                            background: white;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 998;
+                        }
+                        .ad-footer .ad-placeholder {
+                            width: 100%;
+                            max-width: 320px;
+                            height: 90px;
+                        }
+                        .main-wrapper { padding-bottom: 90px; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Create placeholders
+                const wrapper = document.querySelector('.main-content-wrapper');
+                if (wrapper) {
+                    const leftAd = document.createElement('div');
+                    leftAd.className = 'ad-sidebar left';
+                    leftAd.innerHTML = '<div class="ad-placeholder">Left Ad Placeholder</div>';
+                    document.body.insertBefore(leftAd, wrapper);
+                    
+                    const rightAd = document.createElement('div');
+                    rightAd.className = 'ad-sidebar right';
+                    rightAd.innerHTML = '<div class="ad-placeholder">Right Ad Placeholder</div>';
+                    document.body.appendChild(rightAd);
+                    
+                    const footerAd = document.createElement('div');
+                    footerAd.className = 'ad-footer';
+                    footerAd.innerHTML = '<div class="ad-placeholder">Footer Ad Placeholder</div>';
+                    document.body.appendChild(footerAd);
+                    
+                    wrapper.classList.add('main-wrapper');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

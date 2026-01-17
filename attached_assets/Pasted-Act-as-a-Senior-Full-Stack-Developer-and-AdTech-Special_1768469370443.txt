@@ -1,0 +1,129 @@
+Act as a Senior Full-Stack Developer and AdTech Specialist.
+I am providing you with my existing PWA codebase. I need you to implement a comprehensive Monetization, Administration, and "Daily Free Limit" logic.
+
+Here is the precise Specification Document including my AdSense credentials and strict security rules.
+
+### 1. Global Configuration (AdSense)
+You must inject the following Google AdSense script into the `<head>` of the `index.html` (or main entry file):
+
+```html
+<script async src="[https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4856462370528155](https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4856462370528155)"
+     crossorigin="anonymous"></script>
+2. Global Ad Layout (ALL PAGES)
+Requirement: The Banner/Sidebar ads must appear on EVERY PAGE of the application (Home, Game, Settings, etc.), not just the game view.
+
+Implementation Strategy:
+
+Move the ad layout logic to the main App Wrapper or Layout Component (e.g., App.js or Layout.js) that wraps the Router.
+
+Exception: Do NOT show ads on the /admin route.
+
+Responsive Layout Logic (CSS Media Queries):
+
+Condition: If user.is_premium === true, DO NOT render any ads.
+
+Desktop (min-width: 768px):
+
+Layout: [Left Ad Column] - [Page Content] - [Right Ad Column].
+
+Use CSS Grid: grid-template-columns: 200px 1fr 200px;
+
+The side columns must be sticky/fixed so they stay visible while scrolling.
+
+Mobile (max-width: 767px):
+
+Layout: Standard column.
+
+Insert a Sticky Footer Ad fixed to the bottom (position: fixed; bottom: 0; z-index: 999;).
+
+Add padding-bottom to the main content container to prevent the UI from being hidden behind the ad.
+
+3. Database & User Model Updates
+A. Update User Schema:
+
+Add is_premium (Boolean, default: false).
+
+Keep passwords hashed.
+
+Critical: Ensure the user "RotemD" exists in the DB.
+
+4. Admin Dashboard & Strict Security (Protected Route: /admin)
+SECURITY RULE: The /admin route and all backend API endpoints related to administration must be protected by a strict Hardcoded Username Check.
+
+Logic: if (currentUser.username !== 'RotemD') return 403 Forbidden;
+
+Case Sensitivity: The check must be exact. "rotemd" or "Rotemd" must be REJECTED. Only "RotemD" is allowed.
+
+The Admin Interface:
+
+Create a page /admin.
+
+Search: Input field to filter users by username.
+
+Table: Display columns: User ID, Username, Premium Status (True/False).
+
+Actions:
+
+Toggle Premium: A button/switch next to each user to grant/revoke Premium status.
+
+Reset Password: A button to reset a specific user's password.
+
+5. "First Game Free" & Interstitial Ad Logic
+This applies ONLY when the user clicks "Start Game".
+
+The Logic Flow:
+
+User clicks "Start Game".
+
+Check 1: Is user.is_premium?
+
+YES -> startGame() immediately.
+
+NO -> Proceed to Check 2.
+
+Check 2 (Daily Limit):
+
+Access localStorage. Look for last_played_date and daily_count.
+
+Get current date (YYYY-MM-DD).
+
+IF last_played_date != today:
+
+Set daily_count = 1.
+
+Update last_played_date = today.
+
+Action: startGame() (Free game for the new day).
+
+IF last_played_date == today:
+
+IF daily_count == 0: (Edge case, treat as new day).
+
+IF daily_count >= 1:
+
+Action: Trigger Ad Overlay Modal.
+
+Increment daily_count.
+
+The Ad Overlay Modal:
+
+Full-screen overlay.
+
+Text: "Watch this ad to start your next game...".
+
+Display an AdSense ad unit inside.
+
+Simulate Ad Completion: Implement a "Close Ad" button that appears ONLY after a 5-second countdown timer.
+
+On "Close" click -> startGame().
+
+Summary of Tasks for you:
+Modify HTML head.
+
+Build Admin Backend/Frontend with "RotemD" security.
+
+Implement Global Responsive Ad Layout (Sidebar/Footer) in the main App component.
+
+Implement localStorage logic for the daily free game.
+
+Please analyze my code and implement these features now.

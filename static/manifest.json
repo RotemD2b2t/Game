@@ -1,0 +1,56 @@
+{
+  "short_name": "Games",
+  "name": "Social Games Collection",
+  "description": "A collection of fun social games to play with friends. Includes Imposter and more.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "categories": [
+    "games",
+    "entertainment",
+    "social"
+  ],
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Imposter",
+      "short_name": "Imposter",
+      "description": "Start a new Imposter game",
+      "url": "/imposter_game",
+      "icons": [
+        {
+          "src": "icon.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "My Screen",
+      "short_name": "My Screen",
+      "description": "View your role card",
+      "url": "/app-game",
+      "icons": [
+        {
+          "src": "icon.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

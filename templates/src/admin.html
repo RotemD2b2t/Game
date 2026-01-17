@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ממשק ניהול - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Heebo', sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: rgba(30, 41, 59, 0.7); padding: 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        h1 { color: #fb7185; border-bottom: 2px solid #fb7185; padding-bottom: 10px; }
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; }
+        input[type="text"] { flex-grow: 1; padding: 10px; border-radius: 8px; border: none; background: rgba(0,0,0,0.3); color: white; }
+        button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-search { background: #6366f1; color: white; }
+        .btn-home { background: #94a3b8; color: #0f172a; text-decoration: none; display: inline-block; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { color: #94a3b8; }
+        .status-premium { color: #4ade80; font-weight: bold; }
+        .status-free { color: #94a3b8; }
+        .action-btn { font-size: 0.8rem; padding: 5px 10px; margin-left: 5px; }
+        .toggle-btn { background: #fbbf24; color: black; }
+        .reset-btn { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>ממשק ניהול (Admin: {{ admin_user }})</h1>
+            <a href="/" class="btn-home" style="padding: 10px; border-radius: 8px;">חזרה לבית</a>
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="חפש משתמש..." onkeypress="if(event.key === 'Enter') fetchUsers()">
+            <button class="btn-search" onclick="fetchUsers()">חפש</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>שם משתמש</th>
+                    <th>סטטוס</th>
+                    <th>פעולות</th>
+                </tr>
+            </thead>
+            <tbody id="usersTable">
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', fetchUsers);
+
+        async function fetchUsers() {
+            const search = document.getElementById('searchInput').value;
+            try {
+                const res = await fetch(`/api/admin/users?search=${encodeURIComponent(search)}`);
+                const users = await res.json();
+                renderTable(users);
+            } catch (e) {
+                alert('שגיאה בטעינת נתונים');
+            }
+        }
+
+        function renderTable(users) {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = '';
+            users.forEach(user => {
+                const isPremium = user.is_premium === 1;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td class="${isPremium ? 'status-premium' : 'status-free'}">
+                        ${isPremium ? '💎 Premium' : 'Free'}
+                    </td>
+                    <td>
+                        <button class="action-btn toggle-btn" onclick="togglePremium(${user.id}, ${!isPremium})">
+                            ${isPremium ? 'בטל פרימיום' : 'הפוך לפרימיום'}
+                        </button>
+                        <button class="action-btn reset-btn" onclick="resetPassword(${user.id})">אפס סיסמה</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function togglePremium(userId, newStatus) {
+            if (!confirm(newStatus ? 'להפוך משתמש זה לפרימיום?' : 'לבטל פרימיום למשתמש זה?')) return;
+            try {
+                const res = await fetch('/api/admin/toggle_premium', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: userId, status: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) fetchUsers();
+                else alert(data.message || 'שגיאה');
+            } catch (e) { console.error(e); }
+        }
+
+        async function resetPassword(userId) {
+            const newPass = prompt('הכנס סיסמה חדשה:');
+            if (!newPass) return;
+            try {
+                const res = await fetch('/api/admin/reset_password', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: userId, new_password: newPass })
+                });
+                if ((await res.json()).success) alert('סיסמה שונתה בהצלחה');
+            } catch (e) { console.error(e); }
+        }
+    </script>
+</body>
+</html>

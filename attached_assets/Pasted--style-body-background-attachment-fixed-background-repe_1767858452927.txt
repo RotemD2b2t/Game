@@ -1,0 +1,88 @@
+    <style>
+        body {
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .mode-selector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .mode-tab {
+            padding: 15px 10px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 70px;
+        }
+        .mode-tab.active {
+            background: #e67e22;
+            border-color: #d35400;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .user-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        
+        #game-mode-container {
+            background: rgba(255,255,255,0.3); 
+            padding: 15px; 
+            border-radius: 15px; 
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        #game-mode-container label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.1rem;
+        }
+        #game-mode-container input[type="radio"] {
+            width: 13px;
+            height: 13px;
+            margin: 0;
+            -webkit-appearance: radio;
+            appearance: radio;
+        }
+        .category {
+            width: 13px !important;
+            height: 13px !important;
+            -webkit-appearance: checkbox;
+            appearance: checkbox;
+        }
+    </style>

@@ -1,0 +1,130 @@
+בוודאי. זה שינוי חשוב – במקום להסתמך רק על "תפקיד" (Role), אנחנו עושים Hardcoding (קידוד קשיח) של השם הספציפי שלך כמנגנון אבטחה. זה אומר שאפילו אם מישהו יצליח לפרוץ למסד הנתונים ולשנות לעצמו את התפקיד ל-Admin, הקוד עצמו יחסום אותו כי לא קוראים לו "RotemD".
+
+הנה הפרומפט המעודכן והסופי. עדכנתי את סעיף 3 (Security & Admin) כדי להיות ספציפי בטירוף לגבי השם שלך.
+
+תעתיק הכל ותשלח:
+
+הפרומפט המלא והסופי (Copy-Paste):
+Plaintext
+
+Act as a Senior Full-Stack Developer and AdTech Specialist.
+I am providing you with my existing PWA codebase. I need you to implement a comprehensive Monetization, Administration, and "Daily Free Limit" logic.
+
+Here is the precise Specification Document including my AdSense credentials and strict security rules.
+
+### 1. Global Configuration (AdSense)
+You must inject the following Google AdSense script into the `<head>` of the `index.html` (or main entry file):
+
+```html
+<script async src="[https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4856462370528155](https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4856462370528155)"
+     crossorigin="anonymous"></script>
+2. Database & User Model Updates
+A. Update User Schema:
+
+Add is_premium (Boolean, default: false).
+
+Keep passwords hashed.
+
+Critical: Ensure the user "RotemD" exists in the DB.
+
+3. Admin Dashboard & Strict Security (Protected Route: /admin)
+SECURITY RULE: The /admin route and all backend API endpoints related to administration must be protected by a strict Hardcoded Username Check.
+
+Logic: if (currentUser.username !== 'RotemD') return 403 Forbidden;
+
+Case Sensitivity: The check must be exact. "rotemd" or "Rotemd" must be REJECTED. Only "RotemD" is allowed.
+
+The Admin Interface:
+
+Create a page /admin.
+
+Search: Input field to filter users by username.
+
+Table: Display columns: User ID, Username, Premium Status (True/False).
+
+Actions:
+
+Toggle Premium: A button/switch next to each user to grant/revoke Premium status.
+
+Reset Password: A button to reset a specific user's password (since you cannot view old passwords).
+
+4. Responsive Ad Layout (Persistent Ads)
+Implement the layout logic using CSS Media Queries. Condition: If user.is_premium === true, DO NOT render these ads.
+
+Desktop (min-width: 768px):
+
+Layout: [Left Ad Column] - [Game Content] - [Right Ad Column].
+
+Use CSS Grid/Flexbox to ensure the game is centered and ad columns are sticky.
+
+Insert AdSense Display Units in the side columns.
+
+Mobile (max-width: 767px):
+
+Layout: standard column.
+
+Insert a Sticky Footer Ad fixed to the bottom (position: fixed; bottom: 0;).
+
+Add padding-bottom to the main content so the game UI isn't covered by the ad.
+
+5. "First Game Free" & Interstitial Ad Logic
+I want users to play one game per day without pre-roll ads, but every subsequent game requires watching an ad (unless they are Premium).
+
+The Logic Flow (in StartGame function):
+
+User clicks "Start Game".
+
+Check 1: Is user.is_premium?
+
+YES -> startGame() immediately.
+
+NO -> Proceed to Check 2.
+
+Check 2 (Daily Limit):
+
+Access localStorage. Look for last_played_date and daily_count.
+
+Get current date (YYYY-MM-DD).
+
+IF last_played_date != today:
+
+Set daily_count = 1.
+
+Update last_played_date = today.
+
+Action: startGame() (Free game for the new day).
+
+IF last_played_date == today:
+
+IF daily_count == 0: (Edge case, treat as new day).
+
+IF daily_count >= 1:
+
+Action: Trigger Ad Overlay Modal.
+
+Increment daily_count.
+
+The Ad Overlay Modal:
+
+Full-screen overlay.
+
+Text: "Watch this ad to start your next game...".
+
+Display an AdSense ad unit inside.
+
+Simulate Ad Completion: Since standard AdSense display ads don't have a reliable "onClose" callback, implement a "Close Ad" button that appears ONLY after a 5-second countdown timer.
+
+On "Close" click -> startGame().
+
+Summary of Tasks for you:
+Modify the HTML head with the provided script.
+
+Build the Backend API for user management with the STRICT "RotemD" check.
+
+Build the Admin Panel frontend (/admin).
+
+Create the Responsive CSS for Sidebars (Desktop) vs Sticky Bottom (Mobile).
+
+Implement the localStorage logic for the "1 Free Game Per Day" rule.
+
+Please analyze my code and implement these features now.

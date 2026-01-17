@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>התחברות</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+</head>
+<body>
+    <a href="/" class="home-btn" title="חזרה למסך הבית">🏠</a>
+
+    <div class="auth-container">
+        <button id="auth-theme-toggle" onclick="toggleAuthTheme()" title="שנה מצב תצוגה">🌓</button>
+
+        <h1>התחברות</h1>
+        <input type="text" id="username" placeholder="שם משתמש" autocomplete="username">
+        <input type="password" id="password" placeholder="סיסמה" autocomplete="current-password">
+        <button onclick="login()">התחבר</button>
+        <p>אין לך משתמש? <a href="/register">הירשם כאן</a></p>
+        <p><a href="/" class="guest-link" style="color: var(--auth-text); opacity: 0.6; font-size: 0.9em;">המשך כאורח</a></p>
+    </div>
+
+    <script>
+        function applyAuthTheme() {
+            const savedTheme = localStorage.getItem('gameTheme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
+        }
+
+        function toggleAuthTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('gameTheme', isLight ? 'light' : 'dark');
+        }
+
+        applyAuthTheme();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const nextUrl = urlParams.get('next');
+
+        if (nextUrl) {
+            const registerLink = document.querySelector('a[href="/register"]');
+            if (registerLink) registerLink.href = `/register?next=${encodeURIComponent(nextUrl)}`;
+            
+            const guestLink = document.querySelector('.guest-link');
+            if (guestLink) guestLink.href = nextUrl;
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if(!username || !password) return alert('נא למלא את כל השדות');
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    window.location.href = nextUrl || '/';
+                } else {
+                    alert(data.message);
+                }
+            } catch(e) {
+                alert('שגיאת תקשורת');
+            }
+        }
+
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+</body>
+</html>

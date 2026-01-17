@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המסך שלי</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #ffffff;
+            --text-sub: #cccccc;
+            --btn-bg: rgba(255, 255, 255, 0.1);
+            --btn-border: rgba(255, 255, 255, 0.2);
+            --modal-bg: #ffffff;
+            --modal-text: #333333;
+            --close-btn-bg: #eee;
+            --close-btn-text: #555;
+            --card-shadow: rgba(0,0,0,0.5);
+            --sender-border: #eee;
+        }
+
+        body.light-mode {
+            --bg-color: #f0f9ff;
+            --text-color: #1e293b;
+            --text-sub: #64748b;
+            --btn-bg: rgba(0, 0, 0, 0.05);
+            --btn-border: rgba(0, 0, 0, 0.1);
+            --modal-bg: #ffffff;
+            --modal-text: #1e293b;
+            --close-btn-bg: #f1f5f9;
+            --close-btn-text: #334155;
+            --card-shadow: rgba(148, 163, 184, 0.4);
+            --sender-border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--btn-bg);
+            color: var(--text-sub);
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: 1px solid var(--btn-border);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--btn-border);
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 1px solid var(--btn-border);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+    
+        .theme-toggle:hover {
+            background: var(--btn-bg);
+            transform: rotate(15deg);
+        }
+
+        #waiting-msg {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        #invite-section {
+            display: none;
+            background: var(--btn-bg);
+            padding: 20px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid var(--btn-border);
+        }
+        
+        .join-btn {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .leave-btn {
+            background: var(--btn-bg);
+            color: var(--text-color);
+            border: 1px solid var(--btn-border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+        
+        .leave-btn:hover {
+            background: var(--btn-border);
+        }
+
+        #show-card-btn {
+            display: none;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        #show-card-btn:active {
+            transform: scale(0.95);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        body.light-mode .modal-overlay {
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            color: var(--modal-text);
+            padding: 40px 30px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 350px;
+            position: relative;
+            box-shadow: 0 20px 50px var(--card-shadow);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            border: 1px solid var(--btn-border);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--close-btn-bg);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--close-btn-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover { 
+            filter: brightness(0.9);
+        }
+
+        h1 { font-size: 2.5rem; margin: 10px 0; line-height: 1.2; }
+        p { font-size: 1.1rem; margin-top: 10px; opacity: 0.8; }
+        
+        .game-content-text { color: var(--modal-text); } 
+
+        .sender-info { 
+            font-size: 0.9rem; 
+            margin-top: 20px; 
+            color: var(--text-sub); 
+            border-top: 1px solid var(--sender-border); 
+            padding-top: 10px; 
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body data-user="{{ user }}">
+
+    <a href="/imposter_game" class="back-btn">חזור</a>
+    
+    <button class="theme-toggle" id="theme-btn" title="החלף מצב תצוגה">🌓</button>
+
+    <div id="waiting-msg">
+        <h3>שלום {{ user }}</h3>
+        <p>ממתין שהמנחה יתחיל את המשחק...</p>
+    </div>
+
+    <div id="invite-section">
+        <h3>הוזמנת למשחק!</h3>
+        <p id="invite-text"></p>
+        <button class="join-btn" onclick="acceptInvite()">אשר והצטרף</button>
+        <button class="leave-btn" onclick="leaveGame()">צא מהמשחק</button>
+    </div>
+
+    <button id="show-card-btn" onclick="openModal()">צפה בקלף שלי</button>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <p>התפקיד/מילה שלך:</p>
+            <h1 id="game-content" class="game-content-text">---</h1>
+            <div id="sender-msg" class="sender-info"></div>
+            <button class="leave-btn" onclick="leaveGame()" style="background: #f87171; color: white; margin-top:20px; border:none;">צא מהמשחק</button>
+        </div>
+    </div>
+
+    <script>
+        const themeBtn = document.getElementById('theme-btn');
+        
+        const savedTheme = localStorage.getItem('gameTheme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('gameTheme', isLight ? 'light' : 'dark');
+        });
+
+        let lastId = null;
+        let currentData = null;
+        let currentHost = null;
+
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/get_my_data');
+                const result = await res.json();
+
+                if (result.hasData) {
+                    if (result.data.id !== lastId) {
+                        lastId = result.data.id;
+                        currentData = result.data;
+                        handleNewData(result.data);
+                    }
+                } 
+                else if (!result.hasData && currentData !== null) {
+                    resetScreen();
+                }
+
+            } catch (e) {
+                console.error("Error polling data", e);
+            }
+        }, 1000);
+
+        function handleNewData(data) {
+            document.getElementById('waiting-msg').style.display = 'none';
+            currentHost = data.sender;
+
+            if (data.type === 'invite') {
+                document.getElementById('show-card-btn').style.display = 'none';
+                document.getElementById('invite-section').style.display = 'block';
+                document.getElementById('invite-text').innerText = data.content;
+                closeModal();
+            } else {
+                document.getElementById('invite-section').style.display = 'none';
+                document.getElementById('show-card-btn').style.display = 'block';
+                updateModalContent(data);
+                
+                if (navigator.vibrate) navigator.vibrate(200);
+            }
+        }
+
+        function updateModalContent(data) {
+            const contentH1 = document.getElementById('game-content');
+            const senderDiv = document.getElementById('sender-msg');
+            
+            contentH1.innerText = data.content;
+            senderDiv.innerText = 'נשלח על ידי: ' + data.sender;
+        }
+
+        async function acceptInvite() {
+            try {
+                await fetch('/api/update_player_status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ status: 'joined', host: currentHost })
+                });
+                
+                document.getElementById('invite-section').innerHTML = `
+                    <h3>הצטרפת בהצלחה!</h3>
+                    <p>ממתין לתחילת המשחק...</p>
+                    <button class="leave-btn" onclick="leaveGame()">צא מהמשחק</button>
+                `;
+            } catch (e) {
+                alert('שגיאה באישור');
+            }
+        }
+
+        async function leaveGame() {
+            if(!confirm('לצאת מהמשחק?')) return;
+            try {
+                await fetch('/api/update_player_status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ status: 'left', host: currentHost })
+                });
+                resetScreen();
+            } catch (e) {
+                alert('שגיאה ביציאה');
+            }
+        }
+
+        function resetScreen() {
+            currentData = null;
+            lastId = null;
+            currentHost = null;
+            closeModal();
+            document.getElementById('show-card-btn').style.display = 'none';
+            document.getElementById('invite-section').style.display = 'none';
+            document.getElementById('waiting-msg').style.display = 'block';
+            
+            document.getElementById('invite-section').innerHTML = `
+                <h3>הוזמנת למשחק!</h3>
+                <p id="invite-text"></p>
+                <button class="join-btn" onclick="acceptInvite()">אשר והצטרף</button>
+                <button class="leave-btn" onclick="leaveGame()">צא מהמשחק</button>
+            `;
+        }
+
+        function openModal() {
+            document.getElementById('modal-overlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+        
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

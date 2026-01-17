@@ -1,0 +1,152 @@
+═══════════════════════════════════════════════════════════════════
+                     🎮 GAME PROJECT - QUICK START
+═══════════════════════════════════════════════════════════════════
+
+📌 COMPLETE COMMANDS TO RUN:
+
+Copy & Paste this in your terminal:
+
+git clone https://github.com/RotemD2b2t/Game.git
+cd Game
+python3 -m pip install -r requirements.txt
+npm install
+npm run build
+python3 main.py
+
+═══════════════════════════════════════════════════════════════════
+
+🔍 STEP BY STEP:
+
+1️⃣  Clone Repository:
+    git clone https://github.com/RotemD2b2t/Game.git
+    cd Game
+
+2️⃣  Install Python Dependencies:
+    python3 -m pip install -r requirements.txt
+
+3️⃣  Install Node Dependencies:
+    npm install
+
+4️⃣  Build Frontend:
+    npm run build
+
+5️⃣  Start Server:
+    python3 main.py
+
+6️⃣  Open Browser:
+    http://localhost:5000
+
+═══════════════════════════════════════════════════════════════════
+
+🔐 LOGIN CREDENTIALS:
+
+Username: RotemD
+Password: admin123
+
+═══════════════════════════════════════════════════════════════════
+
+💡 ALTERNATIVE RUN OPTIONS:
+
+Option 1 (npm dev mode):
+    npm run dev
+
+Option 2 (Python Flask):
+    python3 main.py
+
+═══════════════════════════════════════════════════════════════════
+
+🧹 IF SOMETHING BREAKS - Clean & Reinstall:
+
+rm -rf node_modules
+rm -rf __pycache__
+npm install
+python3 -m pip install -r requirements.txt --upgrade
+npm run build
+python3 main.py
+
+═══════════════════════════════════════════════════════════════════
+
+✅ FEATURES IMPLEMENTED:
+
+✓ AdSense Global Layout (Sidebars + Footer)
+✓ Daily Free Game Limit (1 game/day for non-premium)
+✓ Interstitial Ad Modal (5-second countdown)
+✓ Admin Dashboard (/admin) with RotemD security
+✓ Ad Placeholders for Testing (Gray boxes when admin+premium)
+✓ Premium Status Toggle (Admin only)
+✓ Database Auto-initialization (users.db)
+
+═══════════════════════════════════════════════════════════════════
+
+🧪 TEST THE FEATURES:
+
+1. Admin Dashboard:
+   → Login as RotemD
+   → Go to http://localhost:5000/admin
+   → See user table with Toggle Premium button
+
+2. Ad Placeholders:
+   → Set RotemD to Premium in Admin Dashboard
+   → Logout and login again
+   → See gray ad placeholders on all pages
+
+3. Daily Game Limit:
+   → Create new user (non-premium)
+   → Click "שחק עכשיו" (Play Now)
+   → First game = free
+   → Second click = see Ad Modal with countdown
+
+═══════════════════════════════════════════════════════════════════
+
+⚠️ COMMON ISSUES & FIXES:
+
+Issue: "python: command not found"
+Fix: Use python3 instead
+
+Issue: "pip: command not found"
+Fix: Use pip3 or python3 -m pip
+
+Issue: Port 5000 already in use
+Fix:
+    lsof -i :5000
+    kill -9 <PID>
+
+Issue: node_modules error
+Fix:
+    rm -rf node_modules
+    npm install
+
+═══════════════════════════════════════════════════════════════════
+
+📁 KEY FILES MODIFIED:
+
+Frontend:
+  • client/index.html
+  • client/src/App.tsx
+  • client/src/components/AppLayout.tsx
+  • client/src/components/AdInterstitial.tsx
+  • client/src/hooks/use-daily-game.ts
+  • client/src/lib/adConfig.ts
+
+Backend:
+  • main.py (+ daily game API endpoints)
+  • static/choosegame.js (+ daily game logic)
+  • templates/src/choosegame.html (+ ad placeholders)
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 NEXT STEPS:
+
+1. Update AdSense Slot IDs:
+   Edit: client/src/lib/adConfig.ts
+   Replace placeholder slot IDs with your real ones
+
+2. Test on Published Domain:
+   • game-platform--rotemdujovny.replit.app
+   • cfea6322-5da0-4046-9bdf-84eb085104be-00-glbm0cltnd21.pike.replit.dev
+
+3. Monitor AdSense Revenue:
+   • Google AdSense Console
+   • Check earnings reports
+
+═══════════════════════════════════════════════════════════════════
