@@ -54,7 +54,7 @@ $ python3 main.py
 שלב 6: גש לאתר
 ───────────────
 פתח את הדפדפן וגש ל:
-http://localhost:5000
+http://localhost:5001
 
 ═══════════════════════════════════════════════════════════════
       בדיקת Credentials בעת ההפעלה הראשונה
@@ -89,7 +89,7 @@ Password: admin123
 
 1️⃣  Admin Dashboard:
    - התחבר כ- RotemD
-   - גש ל- http://localhost:5000/admin
+   - גש ל- http://localhost:5001/admin
 
 2️⃣  Ad Placeholders (אם admin עם premium):
    - בAdmin: לחץ "Toggle Premium" עבור RotemD

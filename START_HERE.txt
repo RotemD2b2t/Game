@@ -29,7 +29,7 @@ git clone https://github.com/RotemD2b2t/Game.git && cd Game && python3 -m pip in
    $ python3 main.py
 
 6️⃣  פתח דפדפן וגש ל:
-   http://localhost:5000
+   http://localhost:5001
 
 ═════════════════════════════════════════════════════════════════════════════
 
@@ -69,7 +69,7 @@ Password: admin123
 
 1. הרץ: python3 main.py
 2. התחבר: RotemD / admin123
-3. גש ל: http://localhost:5000/admin
+3. גש ל: http://localhost:5001/admin
 4. לחץ "Toggle Premium" עבור RotemD
 5. התנתק והתחבר מחדש
 6. אמור לראות מלבנים אפורים בכל עמוד
@@ -141,10 +141,10 @@ Slot IDs (צריך לעדכן עם שלך):
 🌐 URLs להשימוש:
 
 Development:
-  • http://localhost:5000 (Main site)
-  • http://localhost:5000/admin (Admin Dashboard)
-  • http://localhost:5000/login (Login page)
-  • http://localhost:5000/register (Register page)
+  • http://localhost:5001 (Main site)
+  • http://localhost:5001/admin (Admin Dashboard)
+  • http://localhost:5001/login (Login page)
+  • http://localhost:5001/register (Register page)
 
 Production (Replit):
   • game-platform--rotemdujovny.replit.app

@@ -79,7 +79,7 @@ python3 main.py
 ### 6. גש לאתר
 פתח את הדפדפן שלך וגש ל:
 ```
-http://localhost:5000
+http://localhost:5001
 ```
 
 ## פורטים
@@ -181,7 +181,7 @@ python3 main.py
 
 ### בדיקת Admin Dashboard
 1. התחבר כ-RotemD (סיסמה: admin123)
-2. גש ל`http://localhost:5000/admin`
+2. גש ל`http://localhost:5001/admin`
 3. אמור לראות טבלה עם כל המשתמשים
 
 ### בדיקת Ad Placeholders (כשאתה admin עם premium)
@@ -191,7 +191,7 @@ python3 main.py
 
 ### בדיקת Daily Game Limit
 1. התחבר כ-user לא-premium (או create משתמש חדש)
-2. גש ל`http://localhost:5000` - לחץ "שחק עכשיו"
+2. גש ל`http://localhost:5001` - לחץ "שחק עכשיו"
 3. המשחק הראשון אמור לעלות ללא ads
 4. חזור ללוח הבית (לחץ 🏠)
 5. לחץ "שחק עכשיו" שוב - אמור לראות modal עם פרסומת + countdown
